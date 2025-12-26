@@ -13,7 +13,7 @@
     },
     "Empty": {
         "empty.ogg": "https://github.com/tgstation/tgstation/commit/d4f678a1772007ff8d7eddd21cf7218c8e07bfc0",
-        "laser_empty.ogg": "CELL PHONE DBL BEEP NOTIFICATION.wav by diniunicorn -- https://freesound.org/s/330601/ -- License: Creative Commons 0, modified by Prole0",
+        "energy_empty.ogg": "FX_Beep_02.wav by PeteBarry -- https://freesound.org/s/493789/ -- License: Attribution 4.0, modified by Prole0",
         "lmg_empty.ogg": "https://github.com/vgstation-coders/vgstation13/blob/217aa33a41e891e144ceec710fbe1877df747adb/sound/weapons/empty.ogg"
     },
     "EmptyAlarm": {
