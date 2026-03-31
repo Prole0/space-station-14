@@ -190,7 +190,7 @@ public sealed partial class SharedForensicScannerSystem : EntitySystem
         }
 
         // Spawn a piece of paper.
-        var printed = PredictedSpawnAtPosition(scanner.Comp.MachineOutput, Transform(scanner).Coordinates);
+        var printed = PredictedSpawnAtPosition(scanner.Comp.PaperPrototypeID, Transform(scanner).Coordinates);
         _handsSystem.PickupOrDrop(user, printed, checkActionBlocker: false);
 
         if (!TryComp<PaperComponent>(printed, out var paperComp))
