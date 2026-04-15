@@ -1,5 +1,4 @@
-﻿using Content.Client.Chemistry.Visualizers;
-using Content.Shared.Chemistry.Components;
+﻿using Content.Shared.Chemistry.Components;
 
 namespace Content.Client.Storage.Components;
 
@@ -11,14 +10,26 @@ namespace Content.Client.Storage.Components;
 [RegisterComponent]
 public sealed partial class StorageContainerVisualsComponent : Component
 {
-    [DataField("maxFillLevels")]
+    [DataField]
     public int MaxFillLevels = 0;
+
+    [DataField]
+    public int InHandsMaxFillLevels = 0;
+
+    [DataField]
+    public int EquippedMaxFillLevels = 0;
 
     /// <summary>
     ///     A prefix to use for the fill states., i.e. {FillBaseName}{fill level} for the state
     /// </summary>
-    [DataField("fillBaseName")]
+    [DataField]
     public string? FillBaseName;
+
+    [DataField]
+    public string? InHandsFillBaseName = null;
+
+    [DataField]
+    public string? EquippedFillBaseName = null;
 
     [DataField("layer")]
     public StorageContainerVisualLayers FillLayer = StorageContainerVisualLayers.Fill;
