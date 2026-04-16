@@ -58,10 +58,10 @@
   - type: StorageContainerVisuals
     maxFillLevels: 3
     fillBaseName: fill-
-    inHandsMaxFillLevels: 1
+    inHandsMaxFillLevels: 2
     inHandsFillBaseName: -fill-
     equippedFillBaseName: -fill-
-    equippedMaxFillLevels: 1
+    equippedMaxFillLevels: 2
   - type: Construction
     graph: Quiver
     node: Quiver

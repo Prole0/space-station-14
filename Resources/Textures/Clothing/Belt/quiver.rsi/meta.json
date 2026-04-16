@@ -15,7 +15,12 @@
       "directions": 4
     },
     {
-      "name": "equipped-belt-fill-1"
+      "name": "equipped-belt-fill-1",
+      "directions": 4
+    },
+    {
+      "name": "equipped-belt-fill-2",
+      "directions": 4
     },
     {
       "name": "fill-1"
@@ -39,7 +44,15 @@
       "directions": 4
     },
     {
+      "name": "inhand-left-fill-2",
+      "directions": 4
+    },
+    {
       "name": "inhand-right-fill-1",
+      "directions": 4
+    },
+    {
+      "name": "inhand-right-fill-2",
       "directions": 4
     }
   ]
