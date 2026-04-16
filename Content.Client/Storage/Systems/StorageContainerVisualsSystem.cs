@@ -35,8 +35,7 @@ public sealed class StorageContainerVisualsSystem : VisualizerSystem<StorageCont
         if (!SpriteSystem.LayerMapTryGet((uid, args.Sprite), component.FillLayer, out var fillLayer, false))
             return;
 
-        var closestFillSprite = Math.Min(ContentHelpers.RoundToNearestLevels(fraction, 1, component.MaxFillLevels + 1),
-            component.MaxFillLevels);
+        var closestFillSprite = ContentHelpers.RoundToLevels(fraction, 1, component.MaxFillLevels + 1);
 
         if (closestFillSprite > 0)
         {
@@ -74,8 +73,7 @@ public sealed class StorageContainerVisualsSystem : VisualizerSystem<StorageCont
 
         var fraction = used / (float)capacity;
 
-        var closestFillSprite = Math.Min(ContentHelpers.RoundToNearestLevels(fraction, 1, component.InHandsMaxFillLevels + 1),
-            component.InHandsMaxFillLevels);
+        var closestFillSprite = ContentHelpers.RoundToLevels(fraction, 1, component.InHandsMaxFillLevels + 1);
 
         if (closestFillSprite > 0)
         {
