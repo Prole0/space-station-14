@@ -1,5 +1,7 @@
 ﻿using Content.Client.Items.Systems;
 using Content.Client.Storage.Components;
+using Content.Shared.Clothing;
+using Content.Shared.Clothing.Components;
 using Content.Shared.Hands;
 using Content.Shared.Item;
 using Content.Shared.Rounding;
@@ -17,6 +19,7 @@ public sealed class StorageContainerVisualsSystem : VisualizerSystem<StorageCont
     {
         base.Initialize();
         SubscribeLocalEvent<StorageContainerVisualsComponent, GetInhandVisualsEvent>(OnGetHeldVisuals);
+        SubscribeLocalEvent<StorageContainerVisualsComponent, GetEquipmentVisualsEvent>(OnGetClothingVisuals);
     }
 
     protected override void OnAppearanceChange(EntityUid uid, StorageContainerVisualsComponent component, ref AppearanceChangeEvent args)
@@ -81,6 +84,44 @@ public sealed class StorageContainerVisualsSystem : VisualizerSystem<StorageCont
 
             var heldPrefix = item.HeldPrefix == null ? "inhand-" : $"{item.HeldPrefix}-inhand-";
             var key = heldPrefix + args.Location.ToString().ToLowerInvariant() + component.InHandsFillBaseName + closestFillSprite;
+
+            layer.State = key;
+
+            args.Layers.Add((key, layer));
+        }
+    }
+
+    private void OnGetClothingVisuals(Entity<StorageContainerVisualsComponent> ent, ref GetEquipmentVisualsEvent args)
+    {
+        if (ent.Comp.EquippedFillBaseName == null)
+            return;
+
+        if (!TryComp<AppearanceComponent>(ent, out var appearance))
+            return;
+
+        if (!TryComp<ClothingComponent>(ent, out var clothing))
+            return;
+
+        if (!AppearanceSystem.TryGetData<int>(ent, StorageVisuals.StorageUsed, out var used, appearance))
+            return;
+
+        if (!AppearanceSystem.TryGetData<int>(ent, StorageVisuals.Capacity, out var capacity, appearance))
+            return;
+
+        var fraction = used / (float)capacity;
+
+        var closestFillSprite = ContentHelpers.RoundToLevels(fraction, 1, ent.Comp.EquippedMaxFillLevels + 1);
+
+        if (closestFillSprite > 0)
+        {
+            var layer = new PrototypeLayerData();
+
+            var equippedPrefix = clothing.EquippedPrefix == null ? $"equipped-{args.Slot}" : $" {clothing.EquippedPrefix}-equipped-{args.Slot}";
+            var key = equippedPrefix + ent.Comp.EquippedFillBaseName + closestFillSprite;
+
+            // Same check as the one in SolutionContainerVisualsSystem, we really need generalized code for all of this...
+            if (!TryComp<SpriteComponent>(ent, out var sprite) || sprite.BaseRSI == null || !sprite.BaseRSI.TryGetState(key, out _))
+                return;
 
             layer.State = key;
 

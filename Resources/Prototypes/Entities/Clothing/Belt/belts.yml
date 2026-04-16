@@ -60,6 +60,8 @@
     fillBaseName: fill-
     inHandsMaxFillLevels: 1
     inHandsFillBaseName: -fill-
+    equippedFillBaseName: -fill-
+    equippedMaxFillLevels: 1
   - type: Construction
     graph: Quiver
     node: Quiver
