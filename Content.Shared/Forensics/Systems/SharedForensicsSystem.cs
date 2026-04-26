@@ -1,6 +1,5 @@
 using Content.Shared.Body.Systems;
 using Content.Shared.Chemistry.Components;
-using Content.Shared.Chemistry.Components.SolutionManager;
 using Content.Shared.Chemistry.EntitySystems;
 using Content.Shared.Chemistry.Reagent;
 using Content.Shared.DoAfter;
@@ -40,54 +39,54 @@ public sealed class SharedForensicsSystem : EntitySystem
         SubscribeLocalEvent<ForensicsComponent, GotRehydratedEvent>(OnRehydrated);
         SubscribeLocalEvent<CleansForensicsComponent, AfterInteractEvent>(OnAfterInteract, after: new[] { typeof(SharedAbsorbentSystem) });
         SubscribeLocalEvent<ForensicsComponent, CleanForensicsDoAfterEvent>(OnCleanForensicsDoAfter);
-        SubscribeLocalEvent<DnaSubstanceTraceComponent, SolutionContainerChangedEvent>(OnSolutionChanged);
+        SubscribeLocalEvent<DnaSubstanceTraceComponent, SolutionChangedEvent>(OnSolutionChanged);
         SubscribeLocalEvent<CleansForensicsComponent, GetVerbsEvent<UtilityVerb>>(OnUtilityVerb);
     }
 
-    private void OnSolutionChanged(Entity<DnaSubstanceTraceComponent> puddle, ref SolutionContainerChangedEvent ev)
+    private void OnSolutionChanged(Entity<DnaSubstanceTraceComponent> ent, ref SolutionChangedEvent ev)
     {
         var soln = GetSolutionsDNA(ev.Solution);
 
         if (soln.Count <= 0)
             return;
 
-        var comp = EnsureComp<ForensicsComponent>(puddle.Owner);
+        var comp = EnsureComp<ForensicsComponent>(ent.Owner);
         foreach (var dna in soln)
         {
             comp.DNAs.Add(dna);
         }
-        Dirty(puddle);
+        Dirty(ent);
     }
 
-    private void OnInteract(Entity<HandsComponent> hands, ref ContactInteractionEvent args)
+    private void OnInteract(Entity<HandsComponent> ent, ref ContactInteractionEvent args)
     {
-        ApplyEvidence(hands.Owner, args.Other);
+        ApplyEvidence(ent.Owner, args.Other);
     }
 
-    private void OnFingerprintInit(Entity<FingerprintComponent> fingerPrint, ref MapInitEvent args)
+    private void OnFingerprintInit(Entity<FingerprintComponent> ent, ref MapInitEvent args)
     {
-        if (fingerPrint.Comp.Fingerprint == null)
-            RandomizeFingerprint((fingerPrint.Owner, fingerPrint.Comp));
+        if (ent.Comp.Fingerprint == null)
+            RandomizeFingerprint((ent.Owner, ent.Comp));
     }
 
-    private void OnDNAInit(Entity<DnaComponent> dna, ref MapInitEvent args)
+    private void OnDNAInit(Entity<DnaComponent> ent, ref MapInitEvent args)
     {
-        if (dna.Comp.DNA == null)
-            RandomizeDNA(dna.AsNullable());
+        if (ent.Comp.DNA == null)
+            RandomizeDNA(ent.AsNullable());
         else
         {
             // If set manually (for example by cloning) we also need to inform the bloodstream of the correct DNA string so it can be updated
-            var ev = new GenerateDnaEvent { Owner = dna.Owner, DNA = dna.Comp.DNA };
-            RaiseLocalEvent(dna.Owner, ref ev);
-            Dirty(dna);
+            var ev = new GenerateDnaEvent { Owner = ent.Owner, DNA = ent.Comp.DNA };
+            RaiseLocalEvent(ent.Owner, ref ev);
+            Dirty(ent);
         }
     }
 
-    private void OnBeingGibbed(Entity<ForensicsComponent> gibbed, ref GibbedBeforeDeletionEvent args)
+    private void OnBeingGibbed(Entity<ForensicsComponent> ent, ref GibbedBeforeDeletionEvent args)
     {
         var dna = Loc.GetString("forensics-dna-unknown");
 
-        if (TryComp(gibbed, out DnaComponent? dnaComp) && dnaComp.DNA != null)
+        if (TryComp(ent, out DnaComponent? dnaComp) && dnaComp.DNA != null)
             dna = dnaComp.DNA;
 
         foreach (var part in args.Giblets)
@@ -123,7 +122,7 @@ public sealed class SharedForensicsSystem : EntitySystem
     /// Copy forensic information from a source entity to a destination.
     /// Existing forensic information on the target is still kept.
     /// </summary>
-    public void CopyForensicsFrom(Entity <ForensicsComponent?> src, EntityUid target)
+    public void CopyForensicsFrom(Entity<ForensicsComponent?> src, EntityUid target)
     {
         if (!Resolve(target, ref src.Comp, false))
         {
@@ -150,17 +149,14 @@ public sealed class SharedForensicsSystem : EntitySystem
         {
             targetComp.Residues.Add(residue);
         }
+
         Dirty(target, targetComp);
     }
 
     public List<string> GetSolutionsDNA(EntityUid uid)
     {
-        List<string> list = [];
-
-        if (!TryComp<SolutionContainerManagerComponent>(uid, out var comp))
-            return list;
-
-        foreach (var (_, soln) in _solutionContainerSystem.EnumerateSolutions((uid, comp)))
+        List<string> list = new();
+        foreach (var (_, soln) in _solutionContainerSystem.EnumerateSolutions(uid))
         {
             list.AddRange(GetSolutionsDNA(soln.Comp.Solution));
         }
@@ -320,25 +316,25 @@ public sealed class SharedForensicsSystem : EntitySystem
 
     #region PublicAPI
 
-    public void RandomizeDNA(Entity<DnaComponent?> dnaOwner)
+    public void RandomizeDNA(Entity<DnaComponent?> ent)
     {
-        if (!Resolve(dnaOwner, ref dnaOwner.Comp, false))
+        if (!Resolve(ent, ref ent.Comp, false))
             return;
 
-        dnaOwner.Comp.DNA = GenerateDNA();
+        ent.Comp.DNA = GenerateDNA();
 
-        var ev = new GenerateDnaEvent { Owner = dnaOwner.Owner, DNA = dnaOwner.Comp.DNA };
-        RaiseLocalEvent(dnaOwner.Owner, ref ev);
-        Dirty(dnaOwner);
+        var ev = new GenerateDnaEvent { Owner = ent.Owner, DNA = ent.Comp.DNA };
+        RaiseLocalEvent(ent.Owner, ref ev);
+        Dirty(ent);
     }
 
-    public void RandomizeFingerprint(Entity<FingerprintComponent?> fingerprintOwner)
+    public void RandomizeFingerprint(Entity<FingerprintComponent?> ent)
     {
-        if (!Resolve(fingerprintOwner, ref fingerprintOwner.Comp, false))
+        if (!Resolve(ent, ref ent.Comp, false))
             return;
 
-        fingerprintOwner.Comp.Fingerprint = GenerateFingerprint();
-        Dirty(fingerprintOwner);
+        ent.Comp.Fingerprint = GenerateFingerprint();
+        Dirty(ent);
     }
 
     /// <summary>
@@ -376,5 +372,4 @@ public sealed class SharedForensicsSystem : EntitySystem
         return !ev.Cancelled;
     }
     #endregion
-
 }

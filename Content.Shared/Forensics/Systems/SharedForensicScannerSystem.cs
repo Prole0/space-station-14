@@ -174,6 +174,7 @@ public sealed partial class SharedForensicScannerSystem : EntitySystem
     private void OpenUserInterface(EntityUid user, Entity<ForensicScannerComponent> scanner)
     {
         _uiSystem.OpenUi(scanner.Owner, ForensicScannerUiKey.Key, user, true);
+
         UpdateUi(scanner);
     }
 
