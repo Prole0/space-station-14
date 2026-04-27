@@ -5,7 +5,8 @@ namespace Content.Client.Storage.Components;
 /// <summary>
 ///     Essentially a version of <see cref="SolutionContainerVisualsComponent"/> fill level handling but for item storage.
 ///     Depending on the fraction of storage that's filled, will change the sprite at <see cref="FillLayer"/> to the nearest
-///     fill level, up to <see cref="MaxFillLevels"/>.
+///     fill level, up to <see cref="MaxFillLevels"/>. Does the same for the Equipped/InHands versions but in their respective
+///     code, OnGetHeldVisuals for InHands & OnGetClothingVisuals for Equipped.
 /// </summary>
 [RegisterComponent]
 public sealed partial class StorageContainerVisualsComponent : Component
@@ -19,9 +20,6 @@ public sealed partial class StorageContainerVisualsComponent : Component
     [DataField]
     public int EquippedMaxFillLevels = 0;
 
-    /// <summary>
-    ///     A prefix to use for the fill states., i.e. {FillBaseName}{fill level} for the state
-    /// </summary>
     [DataField]
     public string? FillBaseName;
 

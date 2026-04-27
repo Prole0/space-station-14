@@ -119,7 +119,7 @@ public sealed class StorageContainerVisualsSystem : VisualizerSystem<StorageCont
             var equippedPrefix = clothing.EquippedPrefix == null ? $"equipped-{args.Slot}" : $" {clothing.EquippedPrefix}-equipped-{args.Slot}";
             var key = equippedPrefix + ent.Comp.EquippedFillBaseName + closestFillSprite;
 
-            // Same check as the one in SolutionContainerVisualsSystem, we really need generalized code for all of this...
+            // Same check as the one in SolutionContainerVisualsSystem.
             if (!TryComp<SpriteComponent>(ent, out var sprite) || sprite.BaseRSI == null || !sprite.BaseRSI.TryGetState(key, out _))
                 return;
 
