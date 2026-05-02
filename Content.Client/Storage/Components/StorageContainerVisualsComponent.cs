@@ -12,22 +12,22 @@ namespace Content.Client.Storage.Components;
 public sealed partial class StorageContainerVisualsComponent : Component
 {
     [DataField]
-    public int MaxFillLevels = 0;
+    public int MaxFillLevels;
 
     [DataField]
-    public int InHandsMaxFillLevels = 0;
+    public int InHandsMaxFillLevels;
 
     [DataField]
-    public int EquippedMaxFillLevels = 0;
+    public int EquippedMaxFillLevels;
 
     [DataField]
     public string? FillBaseName;
 
     [DataField]
-    public string? InHandsFillBaseName = null;
+    public string? InHandsFillBaseName;
 
     [DataField]
-    public string? EquippedFillBaseName = null;
+    public string? EquippedFillBaseName;
 
     [DataField("layer")]
     public StorageContainerVisualLayers FillLayer = StorageContainerVisualLayers.Fill;
